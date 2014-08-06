@@ -1,23 +1,43 @@
 var debug = require('debug')('oa-type');
+var extend = require('xtend');
 var _ = require('lodash');
+var Env = require('jjv');
 
 var merge = require('./lib/merge');
 
-function Type (env, schema) {
-  debug("constructor", env, schema);
-  // call new constructor if not already
-  if (!(this instanceof Type)) {
-    return new Type(env, schema);
-  }
+function Types (types) {
+  Env.call(this);
 
-  // save jjv environment
-  this.env = env;
+  this.types = types || {};
+  this.contexts = {};
+  this.relations = {};
+}
 
-  // save raw schema
-  this.schema = schema;
+// Types extends Env
+var EnvPrototype = Object.create(Env.prototype);
+Types.prototype = extend(Object.create(Env.prototype), {
+  addDataType: EnvPrototype.addType,
+  addDataTypeCoercion: EnvPrototype.addTypeCoercion,
+  addType: function (name, type) {
+    
+  },
+});
+Types.prototype.constructor = Types;
 
-  // save id
-  this.id = schema.id;
+Types.prototype.addType = 
+
+function typeExtension (Env) {
+  debug("typeExtension", Env);
+
+  Env.prototype.addType = addType;
+
+
+
+  return Env;
+}
+
+function addType (schema) {
+  debug("addType", schema);
 
   // save merged schema
   this.merged = merge(env, schema);
