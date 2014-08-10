@@ -18,12 +18,17 @@
   "homepage": "https://github.com/open-app/type",
   "dependencies": {
     "debug": "^1.0.4",
-    "deepest-merge": "^0.1.1",
-    "lodash": "^2.4.1"
+    "jjv": "^1.0.0",
+    "lodash": "^2.4.1",
+    "schema-deref": "^1.0.0",
+    "schema-has-ref": "^1.1.0",
+    "schema-is-schema": "^1.0.0",
+    "schema-jsonld-context": "^1.0.0",
+    "schema-prefix-uri": "^1.0.0",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "chai": "^1.9.1",
-    "jjv": "^1.0.0",
     "mocha": "^1.20.1"
   }
 }

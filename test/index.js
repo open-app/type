@@ -1,6 +1,8 @@
 var expect = require('chai').expect;
 var jjv = require('jjv');
 
+var schemaPrefixUri = require('schema-prefix-uri');
+
 var person = {
   id: "Person",
   prefixes: {
@@ -45,10 +47,16 @@ var membership = {
   },
 };
 
+var base = "http://example.org/";
+
 describe("#oa-type", function () {
-  var env = jjv();
+  var env;
   var Type;
   var types = {};
+
+  before(function () {
+    env = jjv();
+  });
 
   it("should require module", function () {
     Type = require('../');
@@ -56,32 +64,34 @@ describe("#oa-type", function () {
   });
 
   it("should create person type", function () {
-    var personType = types[person.id] = Type(env, person);
+    var personType = types[person.id] = Type({
+      env: env,
+      schema: person,
+      base: base,
+    });
     expect(personType).to.exist;
-    expect(personType).to.have.property("id", person.id);
-    expect(personType).to.have.property("schema", person);
-    expect(personType.merged).to.deep.equal(person);
+    expect(personType).to.have.property("id", "http://example.org/Person");
+    expect(personType).to.have.property("schema");
     expect(personType).to.have.property("env", env);
     expect(personType).to.have.property("validate");
     expect(personType).to.have.property("context");
   });
 
-  it("should be idempotent", function () {
-    Type(env, person);
-  });
-
   it("should create membership type", function () {
-    var membershipType = types[membership.id] = Type(env, membership);
+    var membershipType = types[membership.id] = Type({
+      env: env,
+      schema: membership,
+      base: base,
+    });
     expect(membershipType).to.exist;
-    expect(membershipType).to.have.property("id", membership.id);
-    expect(membershipType).to.have.property("schema", membership);
-    expect(membershipType.merged).to.deep.equal(membership);
+    expect(membershipType).to.have.property("id", "http://example.org/Membership");
+    expect(membershipType).to.have.property("schema");
     expect(membershipType).to.have.property("env", env);
     expect(membershipType).to.have.property("validate");
     expect(membershipType).to.have.property("context");
   });
 
-  describe(".context()", function () {
+  describe(".context", function () {
     it("of personType should be correct", function () {
       expect(types[person.id].context())
       .to.deep.equal({
@@ -96,21 +106,23 @@ describe("#oa-type", function () {
 
   describe("Type.isType()", function () {
     it("of personType should be true", function () {
-      expect(Type.isType(person)).to.be.true;
+      expect(Type.isType(types[person.id])).to.be.true;
     });
   });
 
   describe("relations", function () {
     it("of personType should be { 'memberships': {} }", function () {
-      expect(types[person.id].relations).to.deep.equal({
+      expect(types[person.id].relations)
+      .to.deep.equal(schemaPrefixUri(base, {
         memberships: person.properties.memberships,
-      });
+      }));
     });
 
     it("of membershipType should be { 'member': {} }", function () {
-      expect(types[membership.id].relations).to.deep.equal({
+      expect(types[membership.id].relations)
+      .to.deep.equal(schemaPrefixUri(base, {
         member: membership.properties.member,
-      });
+      }));
     });
   });
 });
