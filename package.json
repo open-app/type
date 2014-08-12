@@ -1,6 +1,6 @@
 {
   "name": "oa-type",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "OpenApp abstract type",
   "main": "index.js",
   "scripts": {
