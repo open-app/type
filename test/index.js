@@ -35,6 +35,7 @@ var membership = {
     org: "http://www.w3.org/TR/vocab-org#",
   },
   type: 'object',
+  context: "org:Membership",
   properties: {
     member: {
       context: "org:member",
@@ -43,6 +44,30 @@ var membership = {
       }, {
         $ref: "Group",
       }],
+    },
+  },
+};
+
+var group = {
+  id: "Group",
+  prefixes: {
+    "": "http://schema.org/",
+    org: "http://www.w3.org/TR/vocab-org#",
+  },
+  type: 'object',
+  context: "org:Organization",
+  properties: {
+    name: {
+      type: "string",
+      context: "foaf:name",
+    },
+    memberships: {
+      type: "array",
+      context: "org:hasMembership",
+      items: {
+        reverse: "member",
+        $ref: "Membership",
+      },
     },
   },
 };
@@ -91,6 +116,20 @@ describe("#oa-type", function () {
     expect(membershipType).to.have.property("context");
   });
 
+  it("should create group type", function () {
+    var groupType = types[group.id] = Type({
+      env: env,
+      schema: group,
+      base: base,
+    });
+    expect(groupType).to.exist;
+    expect(groupType).to.have.property("id", "http://example.org/Group");
+    expect(groupType).to.have.property("schema");
+    expect(groupType).to.have.property("env", env);
+    expect(groupType).to.have.property("validate");
+    expect(groupType).to.have.property("context");
+  });
+
   describe(".context", function () {
     it("of personType should be correct", function () {
       expect(types[person.id].context())
@@ -100,6 +139,9 @@ describe("#oa-type", function () {
         org: "http://www.w3.org/TR/vocab-org#",
         name: "foaf:name",
         memberships: "org:hasMembership",
+        Membership: "org:Membership",
+        member: "org:member",
+        Group: "org:Organization",
       });
     });
   });

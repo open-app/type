@@ -51,10 +51,6 @@ Type.prototype.validate = function (obj) {
 };
 
 Type.prototype.context = function () {
-  console.log(this.env.schema, this.schema,
-    schemaDeRef(this.env.schema, this.schema)
-  )
-
   return schemaJsonldContext(
     schemaDeRef(this.env.schema, this.schema)
   );
